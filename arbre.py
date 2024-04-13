@@ -6,7 +6,6 @@ class Noeud:
         self.milieu = None
         self.droit = None
 
-
 class Arbre:
     def __init__(self):
         self.racine = None

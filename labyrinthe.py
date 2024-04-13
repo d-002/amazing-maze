@@ -1,47 +1,41 @@
 from random import *
 
+# j'ai eu du mal a utiliser la structure_pile,
+# donc je me suis débrouillé autrement
 
-# j'ai eu du mal a utiliser la structure_pile, donc je me suis débrouillé autrement
-
+def voisins(maze, X, Y, n, m):
+    # renvoie les voisons non visités autour de la cellule (X, Y)
+    N = []
+    for x, y, count in [(X, Y-1, 0), (X+1, Y, 1), (X, Y+1, 2), (X-1, Y, 3)]:
+        if 0 <= x < m and 0 <= y < n and not maze[y][x][4]:
+            N.append([(x, y), count]) # position, indice du voisin
+    return N
 
 def generation(n, m):
-    lab = [[[1, 1, 1, 1, 0] for j in range(m)] for i in range(n)]
-    lab[0][0][3] = 0
-    lab[n - 1][m - 1][2] = 0
-    pile = [(0, 0)]  # je dois mettre quelque chose dans la pile afin qu'elle ne soit pas vide
-    while pile:
-        i, j = pile[-1]
-        lab[i][j][4] = 1
-        cotes = []
-        if i > 0 and lab[i - 1][j][4] == 0:
-            cotes.append((i - 1, j))
-        if i < n - 1 and lab[i + 1][j][4] == 0:
-            cotes.append((i + 1, j))
-        if j > 0 and lab[i][j - 1][4] == 0:
-            cotes.append((i, j - 1))
-        if j < m - 1 and lab[i][j + 1][4] == 0:
-            cotes.append((i, j + 1))
-        if cotes:
-            cote_i, cote_j = choice(cotes)
-            if cote_i < i:
-                lab[i][j][0] = 0
-                lab[cote_i][cote_j][2] = 0
-            elif cote_i > i:
-                lab[i][j][2] = 0
-                lab[cote_i][cote_j][0] = 0
-            elif cote_j < j:
-                lab[i][j][3] = 0
-                lab[cote_i][cote_j][1] = 0
-            else:
-                lab[i][j][1] = 0
-                lab[cote_i][cote_j][3] = 0
-            pile.append((cote_i, cote_j))
-        else:
-            pile.pop()
-    for i in lab:
-        for j in i:
-            j[1], j[2] = j[2], j[1]
-    return lab
+    lab = [[[1, 1, 1, 1, 0] for x in range(m)] for y in range(n)]
+    lab[0][0][3] = lab[n-1][m-1][2] = 0
 
+    pos = (0, 0)
+    pile = [pos]
+    while pile:
+        x, y = pos
+        lab[y][x][4] = 1
+
+        N = voisins(lab, x, y, n, m)
+        if len(N):
+            pos_, index = choice(N)
+            x_, y_ = pos_
+            # récupérer l'index de mur de la cellule voisine
+            index_ = (index+2) % 4
+            lab[y][x][index] = 0
+            lab[y_][x_][index_] = 0
+
+            pile.append(pos)
+            pos = (x_, y_)
+
+        else: # pas de voisins libre : retour
+            pos = pile.pop()
+
+    return lab
 
 # print(generation(3, 3))

@@ -1,34 +1,32 @@
-import tkinter.ttk as tk
-import tkinter as tk
+from tkinter import *
+from tkinter.ttk import *
+
 from labyrinthe import *
 from arbre import *
 import sys
 
-
 n = 29
 m = 49
 
-
-class Labyrinthe(tk.Tk):
+class Labyrinthe(Tk):
     def __init__(self):
-        tk.Tk.__init__(self)
+        Tk.__init__(self)
         self.creer_widgets()
-        self.initialisation()
+        self.init()
 
     def creer_widgets(self):
-        self.canv = tk.Canvas(self, bg='black', height=600, width=1000)
-        self.canv.pack(side=tk.LEFT)
-        self.bouton_quitter = tk.Button(self, text='Quitter', bg='light blue', command=self.destroy)
-        self.bouton_quitter.pack(side=tk.BOTTOM)
-        self.bouton_nouveau = tk.Button(self, text='Nouveau', command=lambda: self.initialisation())
-        self.bouton_nouveau.pack(side=tk.BOTTOM)
-        self.bouton_solution = tk.Button(self, text='Solution', command=lambda: self.solution(self.final))
-        self.bouton_solution.pack(side=tk.BOTTOM)
-        self.label1 = tk.Label(text=f'Labyrinthe parfait {n}*{m}', bg='light blue')
-        self.label1.pack(side=tk.TOP)
+        self.label1 = Label(text=f'Labyrinthe parfait {n}*{m}')
+        self.label1.grid(columnspan=3)
+        self.canv = Canvas(self, bg='white', height=600, width=1000)
+        self.canv.grid(columnspan=3)
+        self.bouton_quitter = Button(self, text='Quitter', command=self.destroy)
+        self.bouton_quitter.grid()
+        self.bouton_nouveau = Button(self, text='Nouveau', command=self.init)
+        self.bouton_nouveau.grid(column=1, row=2)
+        self.bouton_solution = Button(self, text='Solution', command=self.solution)
+        self.bouton_solution.grid(column=2, row=2)
 
-    def initialisation(self):
-        sys.setrecursionlimit(10000)
+    def init(self):
         lab = generation(n, m)
         self.maze = lab
         self.arbre = Noeud(0)
@@ -38,17 +36,18 @@ class Labyrinthe(tk.Tk):
             pas = 20
             self.canv.delete('all')
             for i in range(n):
+                i_= i+1 # cache pour aller plus vite
                 for j in range(m):
+                    j_ = j+1
                     if self.maze[i][j][0] == 1:
-                        self.canv.create_line(5 + pas * j, 5 + pas * i, 5 + pas * (j + 1), 5 + pas * i)
+                        self.canv.create_line(5 + pas*j, 5 + pas*i, 5 + pas*j_, 5 + pas*i)
                     if self.maze[i][j][1] == 1:
-                        self.canv.create_line(5 + pas * j, 5 + pas * (i + 1), 5 + pas * (j + 1), 5 + pas * (i + 1))
+                        self.canv.create_line(5 + pas*j, 5 + pas*i_, 5 + pas*j_, 5 + pas*i_)
                     if self.maze[i][j][2] == 1:
-                        self.canv.create_line(5 + pas * (j + 1), 5 + pas * i, 5 + pas * (j + 1), 5 + pas * (i + 1))
+                        self.canv.create_line(5 + pas*j_, 5 + pas*i, 5 + pas*j_, 5 + pas*i_)
                     if self.maze[i][j][3] == 1:
-                        self.canv.create_line(5 + pas * j, 5 + pas * i, 5 + pas * j, 5 + pas * (i + 1))
-        else:
-            return self.initialisation()
+                        self.canv.create_line(5 + pas*j, 5 + pas*i, 5 + pas*j, 5 + pas*i_)
+        else: print('failed to solve')
 
     def accroche(self, node, visites, lab):
         k = node.valeur
@@ -101,9 +100,9 @@ class Labyrinthe(tk.Tk):
         if valeur > noeud.valeur:
             return self.recherche(valeur, noeud.droit)
 
-    def solution(self, final):
+    def solution(self):
         chemin = []
-        noeud_courant = final
+        noeud_courant = self.final
         while noeud_courant.pere is not None:
             chemin.append(noeud_courant.valeur)
             noeud_courant = noeud_courant.pere
@@ -118,7 +117,6 @@ class Labyrinthe(tk.Tk):
                 if (i * m + j) in chemin:
                     self.canv.create_oval(5 + pas * j + pas // 3, 5 + pas * i + pas // 3, 5 + pas * j + 2 * pas // 3,
                                           5 + pas * i + 2 * pas // 3, fill='red')
-
 
 if __name__ == '__main__':
     app = Labyrinthe()
