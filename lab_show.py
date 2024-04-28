@@ -27,19 +27,17 @@ class Labyrinthe(Tk):
         self.maze = lab
         self.arbre = Noeud(0)
         pas = 20
+        o = pas>>1 # offset
         self.canv.delete('all')
-        for i in range(n):
-            i_= i+1 # cache pour aller plus vite
-            for j in range(m):
-                j_ = j+1
-                if self.maze[i][j][0] == 1:
-                    self.canv.create_line(5 + pas*j, 5 + pas*i, 5 + pas*j_, 5 + pas*i)
-                if self.maze[i][j][1] == 1:
-                    self.canv.create_line(5 + pas*j, 5 + pas*i_, 5 + pas*j_, 5 + pas*i_)
-                if self.maze[i][j][2] == 1:
-                    self.canv.create_line(5 + pas*j_, 5 + pas*i, 5 + pas*j_, 5 + pas*i_)
-                if self.maze[i][j][3] == 1:
-                    self.canv.create_line(5 + pas*j, 5 + pas*i, 5 + pas*j, 5 + pas*i_)
+        for y in range(n):
+            y_= y+1 # cache pour aller plus vite
+            for x in range(m):
+                x_ = x+1
+                cell = self.maze[y][x]
+                if cell[0]: self.canv.create_line(o+pas*x, o+pas*y, o+pas*x_, o+pas*y)
+                if cell[1]: self.canv.create_line(o+pas*x_, o+pas*y, o+pas*x_, o+pas*y_)
+                if cell[2]: self.canv.create_line(o+pas*x, o+pas*y_, o+pas*x_, o+pas*y_)
+                if cell[3]: self.canv.create_line(o+pas*x, o+pas*y, o+pas*x, o+pas*y_)
 
     def accroche(self, node, visites, lab):
         k = node.valeur

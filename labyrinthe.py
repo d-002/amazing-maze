@@ -9,8 +9,8 @@ def voisins(maze, X, Y, n, m):
     return N
 
 def generation(n, m):
-    lab = [[[1, 1, 1, 1, 0] for x in range(m)] for y in range(n)]
-    lab[0][0][3] = lab[n-1][m-1][2] = 0
+    lab = [[[1, 1, 1, 1, 0] for _ in range(m)] for _ in range(n)]
+    lab[0][0][3] = lab[n-1][m-1][1] = 0
 
     pos = (0, 0)
     pile = [pos]
@@ -27,7 +27,7 @@ def generation(n, m):
             lab[y][x][index] = 0
             lab[y_][x_][index_] = 0
 
-            pile.append(pos)
+            pile.insert(0, pos)
             pos = (x_, y_)
 
         else: # pas de voisins libre : retour
