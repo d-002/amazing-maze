@@ -1,11 +1,11 @@
 from random import *
 
-def voisins(maze, X, Y, n, m):
+def voisins(maze, X, Y, n, m, check):
     # renvoie les voisons non visités autour de la cellule (X, Y)
     N = []
-    for x, y, count in [(X, Y-1, 0), (X+1, Y, 1), (X, Y+1, 2), (X-1, Y, 3)]:
-        if 0 <= x < m and 0 <= y < n and not maze[y][x][4]:
-            N.append([(x, y), count]) # position, indice du voisin
+    for x, y, i in [(X, Y-1, 0), (X+1, Y, 1), (X, Y+1, 2), (X-1, Y, 3)]:
+        if 0 <= x < m and 0 <= y < n and check(x, y, i):
+            N.append([(x, y), i]) # position, indice du voisin
     return N
 
 def generation(n, m):
@@ -14,11 +14,14 @@ def generation(n, m):
 
     pos = (0, 0)
     pile = [pos]
+
+    check = lambda x, y, i: not lab[y][x][4] # besoin que la cellule soit vide ici
+
     while pile:
         x, y = pos
         lab[y][x][4] = 1
 
-        N = voisins(lab, x, y, n, m)
+        N = voisins(lab, x, y, n, m, check)
         if len(N):
             pos_, index = choice(N)
             x_, y_ = pos_
