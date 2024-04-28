@@ -15,39 +15,31 @@ class Labyrinthe(Tk):
         self.init()
 
     def creer_widgets(self):
-        self.label1 = Label(text=f'Labyrinthe parfait {n}*{m}')
-        self.label1.grid(columnspan=3)
+        Label(text=f'Labyrinthe parfait {n}*{m}').grid(columnspan=3)
         self.canv = Canvas(self, bg='white', height=600, width=1000)
         self.canv.grid(columnspan=3)
-        self.bouton_quitter = Button(self, text='Quitter', command=self.destroy)
-        self.bouton_quitter.grid()
-        self.bouton_nouveau = Button(self, text='Nouveau', command=self.init)
-        self.bouton_nouveau.grid(column=1, row=2)
-        self.bouton_solution = Button(self, text='Solution', command=self.solution)
-        self.bouton_solution.grid(column=2, row=2)
+        Button(self, text='Quitter', command=self.destroy).grid()
+        Button(self, text='Nouveau', command=self.init).grid(column=1, row=2)
+        Button(self, text='Solution', command=self.solution).grid(column=2, row=2)
 
     def init(self):
         lab = generation(n, m)
         self.maze = lab
         self.arbre = Noeud(0)
-        a = self.accroche(self.arbre, [0], self.maze)
-        if a:
-            self.final = self.recherche(n * m - 1, a)
-            pas = 20
-            self.canv.delete('all')
-            for i in range(n):
-                i_= i+1 # cache pour aller plus vite
-                for j in range(m):
-                    j_ = j+1
-                    if self.maze[i][j][0] == 1:
-                        self.canv.create_line(5 + pas*j, 5 + pas*i, 5 + pas*j_, 5 + pas*i)
-                    if self.maze[i][j][1] == 1:
-                        self.canv.create_line(5 + pas*j, 5 + pas*i_, 5 + pas*j_, 5 + pas*i_)
-                    if self.maze[i][j][2] == 1:
-                        self.canv.create_line(5 + pas*j_, 5 + pas*i, 5 + pas*j_, 5 + pas*i_)
-                    if self.maze[i][j][3] == 1:
-                        self.canv.create_line(5 + pas*j, 5 + pas*i, 5 + pas*j, 5 + pas*i_)
-        else: print('failed to solve')
+        pas = 20
+        self.canv.delete('all')
+        for i in range(n):
+            i_= i+1 # cache pour aller plus vite
+            for j in range(m):
+                j_ = j+1
+                if self.maze[i][j][0] == 1:
+                    self.canv.create_line(5 + pas*j, 5 + pas*i, 5 + pas*j_, 5 + pas*i)
+                if self.maze[i][j][1] == 1:
+                    self.canv.create_line(5 + pas*j, 5 + pas*i_, 5 + pas*j_, 5 + pas*i_)
+                if self.maze[i][j][2] == 1:
+                    self.canv.create_line(5 + pas*j_, 5 + pas*i, 5 + pas*j_, 5 + pas*i_)
+                if self.maze[i][j][3] == 1:
+                    self.canv.create_line(5 + pas*j, 5 + pas*i, 5 + pas*j, 5 + pas*i_)
 
     def accroche(self, node, visites, lab):
         k = node.valeur
@@ -87,12 +79,10 @@ class Labyrinthe(Tk):
             nouveau_noeud.pere = node
             visites.append(i * len(lab[0]) + (j - 1))
             return self.accroche(nouveau_noeud, visites, self.maze)
-        else:
-            return None
 
     def recherche(self, valeur, noeud):
         if noeud is None:
-            return None
+            return
         if noeud.valeur == valeur:
             return noeud
         if valeur < noeud.valeur:

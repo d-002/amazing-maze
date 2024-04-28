@@ -1,8 +1,5 @@
 from random import *
 
-# j'ai eu du mal a utiliser la structure_pile,
-# donc je me suis débrouillé autrement
-
 def voisins(maze, X, Y, n, m):
     # renvoie les voisons non visités autour de la cellule (X, Y)
     N = []
